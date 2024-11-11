@@ -30,6 +30,9 @@ func OpenBrowserIDE(activeProfile config.Profile, workspaceId string, projectNam
 		return err
 	}
 
+func 
+
+
 	views.RenderInfoMessageBold("Downloading OpenVSCode Server...")
 	projectHostname := config.GetProjectHostname(activeProfile.Id, workspaceId, projectName)
 

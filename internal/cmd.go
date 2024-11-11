@@ -5,4 +5,4 @@ package internal
 
 import "github.com/google/uuid"
 
-var SESSION_ID = uuid.NewString()
+var SESSION_ID = uuid.NewString() //nolint:gochecknoglobals
