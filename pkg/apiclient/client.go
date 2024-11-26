@@ -175,6 +175,9 @@ func parameterValueToString(obj interface{}, key string) string {
 	return fmt.Sprintf("%v", dataMap[key])
 }
 
+// parameterToString converts a parameter to a string
+
+
 // parameterAddToHeaderOrQuery adds the provided object to the request header or url query
 // supporting deep object syntax
 func parameterAddToHeaderOrQuery(headerOrQueryParams interface{}, keyPrefix string, obj interface{}, collectionType string) {

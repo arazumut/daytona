@@ -28,6 +28,8 @@ type ApiGetGitContextRequest struct {
 	repository *GetRepositoryContext
 }
 
+
+
 // Get repository context
 func (r ApiGetGitContextRequest) Repository(repository GetRepositoryContext) ApiGetGitContextRequest {
 	r.repository = &repository
@@ -371,6 +373,8 @@ func (a *GitProviderAPIService) GetGitProviderIdForUrlExecute(r ApiGetGitProvide
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
+
+
 
 	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 	if err != nil {

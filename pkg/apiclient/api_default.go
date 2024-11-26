@@ -18,24 +18,26 @@ import (
 	"net/url"
 )
 
-// DefaultAPIService DefaultAPI service
+// DefaultAPIService DefaultAPI servisi
 type DefaultAPIService service
 
+// ApiHealthCheckRequest Sağlık kontrolü isteği
 type ApiHealthCheckRequest struct {
 	ctx        context.Context
 	ApiService *DefaultAPIService
 }
 
+// Execute isteği çalıştırır
 func (r ApiHealthCheckRequest) Execute() (map[string]string, *http.Response, error) {
 	return r.ApiService.HealthCheckExecute(r)
 }
 
 /*
-HealthCheck Health check
+HealthCheck Sağlık kontrolü
 
-Health check
+Sağlık kontrolü
 
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param ctx context.Context - kimlik doğrulama, loglama, iptal, son tarihler, izleme vb. için kullanılır. http.Request veya context.Background()'dan geçirilir.
 	@return ApiHealthCheckRequest
 */
 func (a *DefaultAPIService) HealthCheck(ctx context.Context) ApiHealthCheckRequest {
@@ -45,7 +47,7 @@ func (a *DefaultAPIService) HealthCheck(ctx context.Context) ApiHealthCheckReque
 	}
 }
 
-// Execute executes the request
+// HealthCheckExecute isteği çalıştırır
 //
 //	@return map[string]string
 func (a *DefaultAPIService) HealthCheckExecute(r ApiHealthCheckRequest) (map[string]string, *http.Response, error) {
@@ -67,25 +69,25 @@ func (a *DefaultAPIService) HealthCheckExecute(r ApiHealthCheckRequest) (map[str
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	// to determine the Content-Type header
+	// İçerik Türü başlığını belirlemek için
 	localVarHTTPContentTypes := []string{}
 
-	// set Content-Type header
+	// İçerik Türü başlığını ayarla
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
 	if localVarHTTPContentType != "" {
 		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
 	}
 
-	// to determine the Accept header
+	// Kabul başlığını belirlemek için
 	localVarHTTPHeaderAccepts := []string{"application/json"}
 
-	// set Accept header
+	// Kabul başlığını ayarla
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	if r.ctx != nil {
-		// API Key Authentication
+		// API Anahtarı Kimlik Doğrulama
 		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
 			if apiKey, ok := auth["Bearer"]; ok {
 				var key string
