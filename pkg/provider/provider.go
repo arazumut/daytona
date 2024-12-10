@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 )
 
+// Sağlayıcı arayüzü
 type Provider interface {
 	Initialize(InitializeProviderRequest) (*util.Empty, error)
 	GetInfo() (ProviderInfo, error)
@@ -32,14 +33,17 @@ type Provider interface {
 	GetProjectInfo(*ProjectRequest) (*project.ProjectInfo, error)
 }
 
+// Sağlayıcı Eklentisi
 type ProviderPlugin struct {
 	Impl Provider
 }
 
+// Sağlayıcı RPC Sunucusu
 func (p *ProviderPlugin) Server(*plugin.MuxBroker) (interface{}, error) {
 	return &ProviderRPCServer{Impl: p.Impl}, nil
 }
 
+// Sağlayıcı RPC İstemcisi
 func (p *ProviderPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
 	return &ProviderRPCClient{client: c}, nil
 }

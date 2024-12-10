@@ -13,119 +13,119 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (s *Server) downloadDefaultProviders() error {
+func (s *Server) varsayılanSaglayicilariIndir() error {
 	manifest, err := s.ProviderManager.GetProvidersManifest()
 	if err != nil {
 		return err
 	}
 
-	defaultProviders := manifest.GetDefaultProviders()
+	varsayılanSaglayicilar := manifest.GetDefaultProviders()
 
-	log.Info("Downloading default providers")
-	for providerName, provider := range defaultProviders {
-		lockFilePath := filepath.Join(s.config.ProvidersDir, providerName, manager.INITIAL_SETUP_LOCK_FILE_NAME)
+	log.Info("Varsayılan sağlayıcılar indiriliyor")
+	for saglayiciAdi, saglayici := range varsayılanSaglayicilar {
+		kilitDosyaYolu := filepath.Join(s.config.ProvidersDir, saglayiciAdi, manager.INITIAL_SETUP_LOCK_FILE_NAME)
 
-		_, err := os.Stat(lockFilePath)
+		_, err := os.Stat(kilitDosyaYolu)
 		if err == nil {
 			continue
 		}
 
-		_, err = s.ProviderManager.DownloadProvider(context.Background(), provider.DownloadUrls, providerName)
+		_, err = s.ProviderManager.DownloadProvider(context.Background(), saglayici.DownloadUrls, saglayiciAdi)
 		if err != nil {
-			if !manager.IsProviderAlreadyDownloaded(err, providerName) {
+			if !manager.IsProviderAlreadyDownloaded(err, saglayiciAdi) {
 				log.Error(err)
 			}
 			continue
 		}
 	}
 
-	log.Info("Default providers downloaded")
+	log.Info("Varsayılan sağlayıcılar indirildi")
 
 	return nil
 }
 
-func (s *Server) registerProviders() error {
-	log.Info("Registering providers")
+func (s *Server) saglayicilariKaydet() error {
+	log.Info("Sağlayıcılar kaydediliyor")
 
 	manifest, err := s.ProviderManager.GetProvidersManifest()
 	if err != nil {
 		return err
 	}
 
-	directoryEntries, err := os.ReadDir(s.config.ProvidersDir)
+	dizinIcerikleri, err := os.ReadDir(s.config.ProvidersDir)
 	if err != nil {
 		if os.IsNotExist(err) {
-			log.Info("No providers found")
+			log.Info("Sağlayıcı bulunamadı")
 			return nil
 		}
 		return err
 	}
 
-	for _, entry := range directoryEntries {
-		if entry.IsDir() {
-			providerDir := filepath.Join(s.config.ProvidersDir, entry.Name())
+	for _, icerik := range dizinIcerikleri {
+		if icerik.IsDir() {
+			saglayiciDizini := filepath.Join(s.config.ProvidersDir, icerik.Name())
 
-			pluginPath, err := s.getPluginPath(providerDir)
+			pluginYolu, err := s.getPluginPath(saglayiciDizini)
 			if err != nil {
-				if !manager.IsNoPluginFound(err, providerDir) {
+				if !manager.IsNoPluginFound(err, saglayiciDizini) {
 					log.Error(err)
 				}
 				continue
 			}
 
-			err = s.ProviderManager.RegisterProvider(pluginPath, false)
+			err = s.ProviderManager.RegisterProvider(pluginYolu, false)
 			if err != nil {
 				log.Error(err)
 				continue
 			}
 
-			// Lock the initial setup
-			lockFilePath := filepath.Join(s.config.ProvidersDir, entry.Name(), manager.INITIAL_SETUP_LOCK_FILE_NAME)
+			// İlk kurulum kilidini oluştur
+			kilitDosyaYolu := filepath.Join(s.config.ProvidersDir, icerik.Name(), manager.INITIAL_SETUP_LOCK_FILE_NAME)
 
-			_, err = os.Stat(lockFilePath)
+			_, err = os.Stat(kilitDosyaYolu)
 			if err != nil {
-				file, err := os.Create(lockFilePath)
+				dosya, err := os.Create(kilitDosyaYolu)
 				if err != nil {
 					return err
 				}
-				defer file.Close()
+				defer dosya.Close()
 			}
 
-			// Check for updates
-			provider, err := s.ProviderManager.GetProvider(entry.Name())
+			// Güncellemeleri kontrol et
+			saglayici, err := s.ProviderManager.GetProvider(icerik.Name())
 			if err != nil {
 				log.Error(err)
 				continue
 			}
 
-			info, err := (*provider).GetInfo()
+			bilgi, err := (*saglayici).GetInfo()
 			if err != nil {
 				log.Error(err)
 				continue
 			}
 
-			if manifest.HasUpdateAvailable(info.Name, info.Version) {
-				log.Infof("Update available for %s. Update with `daytona provider update`.", info.Name)
+			if manifest.HasUpdateAvailable(bilgi.Name, bilgi.Version) {
+				log.Infof("%s için güncelleme mevcut. `daytona provider update` ile güncelleyebilirsiniz.", bilgi.Name)
 			}
 		}
 	}
 
-	log.Info("Providers registered")
+	log.Info("Sağlayıcılar kaydedildi")
 
 	return nil
 }
 
-func (s *Server) getPluginPath(dir string) (string, error) {
-	files, err := os.ReadDir(dir)
+func (s *Server) getPluginPath(dizin string) (string, error) {
+	dosyalar, err := os.ReadDir(dizin)
 	if err != nil {
 		return "", err
 	}
 
-	for _, file := range files {
-		if !file.IsDir() && file.Name() != manager.INITIAL_SETUP_LOCK_FILE_NAME {
-			return filepath.Join(dir, file.Name()), nil
+	for _, dosya := range dosyalar {
+		if !dosya.IsDir() && dosya.Name() != manager.INITIAL_SETUP_LOCK_FILE_NAME {
+			return filepath.Join(dizin, dosya.Name()), nil
 		}
 	}
 
-	return "", errors.New("no plugin found in " + dir)
+	return "", errors.New(dizin + " dizininde eklenti bulunamadı")
 }

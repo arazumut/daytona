@@ -8,6 +8,12 @@ import (
 	"github.com/daytonaio/daytona/pkg/apikey"
 )
 
+// ApiKeyService, API anahtarlarıyla ilgili işlemleri yönetir.
+type ApiKeyService struct {
+	apiKeyStore apikey.Store
+}
+
+// ListClientKeys, istemci türündeki API anahtarlarını listeler.
 func (s *ApiKeyService) ListClientKeys() ([]*apikey.ApiKey, error) {
 	keys, err := s.apiKeyStore.List()
 	if err != nil {
@@ -25,6 +31,7 @@ func (s *ApiKeyService) ListClientKeys() ([]*apikey.ApiKey, error) {
 	return clientKeys, nil
 }
 
+// Revoke, belirtilen isme sahip API anahtarını iptal eder.
 func (s *ApiKeyService) Revoke(name string) error {
 	apiKey, err := s.apiKeyStore.FindByName(name)
 	if err != nil {
@@ -34,6 +41,7 @@ func (s *ApiKeyService) Revoke(name string) error {
 	return s.apiKeyStore.Delete(apiKey)
 }
 
+// Generate, belirtilen tür ve isimde yeni bir API anahtarı oluşturur.
 func (s *ApiKeyService) Generate(keyType apikey.ApiKeyType, name string) (string, error) {
 	key := apikeys.GenerateRandomKey()
 

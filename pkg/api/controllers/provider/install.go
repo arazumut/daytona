@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package provider
@@ -15,10 +15,10 @@ import (
 // InstallProvider godoc
 //
 //	@Tags			provider
-//	@Summary		Install a provider
-//	@Description	Install a provider
+//	@Summary		Provider kurulumunu gerçekleştirir
+//	@Description	Provider kurulumunu gerçekleştirir
 //	@Accept			json
-//	@Param			provider	body	InstallProviderRequest	true	"Provider to install"
+//	@Param			provider	body	InstallProviderRequest	true	"Kurulacak provider"
 //	@Success		200
 //	@Router			/provider/install [post]
 //
@@ -27,7 +27,7 @@ func InstallProvider(ctx *gin.Context) {
 	var req dto.InstallProviderRequest
 	err := ctx.BindJSON(&req)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %w", err))
 		return
 	}
 
@@ -35,14 +35,14 @@ func InstallProvider(ctx *gin.Context) {
 	if _, err := server.ProviderManager.GetProvider(req.Name); err == nil {
 		err := server.ProviderManager.UninstallProvider(req.Name)
 		if err != nil {
-			ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to uninstall current provider: %w", err))
+			ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("mevcut provider'ı kaldırma başarısız: %w", err))
 			return
 		}
 	}
 
 	downloadPath, err := server.ProviderManager.DownloadProvider(ctx.Request.Context(), req.DownloadUrls, req.Name)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to download provider: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("provider indirme başarısız: %w", err))
 		return
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package workspace
@@ -14,9 +14,9 @@ import (
 // StartWorkspace 			godoc
 //
 //	@Tags			workspace
-//	@Summary		Start workspace
-//	@Description	Start workspace
-//	@Param			workspaceId	path	string	true	"Workspace ID or Name"
+//	@Summary		Çalışma alanını başlat
+//	@Description	Çalışma alanını başlat
+//	@Param			workspaceId	path	string	true	"Çalışma Alanı ID veya Adı"
 //	@Success		200
 //	@Router			/workspace/{workspaceId}/start [post]
 //
@@ -28,7 +28,7 @@ func StartWorkspace(ctx *gin.Context) {
 
 	err := server.WorkspaceService.StartWorkspace(ctx.Request.Context(), workspaceId)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to start workspace %s: %w", workspaceId, err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("çalışma alanı %s başlatılamadı: %w", workspaceId, err))
 		return
 	}
 
@@ -38,10 +38,10 @@ func StartWorkspace(ctx *gin.Context) {
 // StartProject 			godoc
 //
 //	@Tags			workspace
-//	@Summary		Start project
-//	@Description	Start project
-//	@Param			workspaceId	path	string	true	"Workspace ID or Name"
-//	@Param			projectId	path	string	true	"Project ID"
+//	@Summary		Projeyi başlat
+//	@Description	Projeyi başlat
+//	@Param			workspaceId	path	string	true	"Çalışma Alanı ID veya Adı"
+//	@Param			projectId	path	string	true	"Proje ID"
 //	@Success		200
 //	@Router			/workspace/{workspaceId}/{projectId}/start [post]
 //
@@ -54,7 +54,7 @@ func StartProject(ctx *gin.Context) {
 
 	err := server.WorkspaceService.StartProject(ctx.Request.Context(), workspaceId, projectId)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to start project %s: %w", projectId, err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("proje %s başlatılamadı: %w", projectId, err))
 		return
 	}
 

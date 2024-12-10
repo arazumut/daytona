@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package workspace
@@ -16,11 +16,11 @@ import (
 // GetWorkspace 			godoc
 //
 //	@Tags			workspace
-//	@Summary		Get workspace info
-//	@Description	Get workspace info
+//	@Summary		Çalışma alanı bilgisini getir
+//	@Description	Çalışma alanı bilgisini getir
 //	@Produce		json
-//	@Param			workspaceId	path		string	true	"Workspace ID or Name"
-//	@Param			verbose		query		bool	false	"Verbose"
+//	@Param			workspaceId	path		string	true	"Çalışma Alanı ID veya Adı"
+//	@Param			verbose		query		bool	false	"Ayrıntılı"
 //	@Success		200			{object}	WorkspaceDTO
 //	@Router			/workspace/{workspaceId} [get]
 //
@@ -34,7 +34,7 @@ func GetWorkspace(ctx *gin.Context) {
 	if verboseQuery != "" {
 		verbose, err = strconv.ParseBool(verboseQuery)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid value for verbose flag"))
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("ayrıntılı bayrağı için geçersiz değer"))
 			return
 		}
 	}
@@ -43,7 +43,7 @@ func GetWorkspace(ctx *gin.Context) {
 
 	w, err := server.WorkspaceService.GetWorkspace(ctx.Request.Context(), workspaceId, verbose)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get workspace: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("çalışma alanı getirilemedi: %w", err))
 		return
 	}
 
@@ -53,12 +53,12 @@ func GetWorkspace(ctx *gin.Context) {
 // ListWorkspaces 			godoc
 //
 //	@Tags			workspace
-//	@Summary		List workspaces
-//	@Description	List workspaces
+//	@Summary		Çalışma alanlarını listele
+//	@Description	Çalışma alanlarını listele
 //	@Produce		json
 //	@Success		200	{array}	WorkspaceDTO
 //	@Router			/workspace [get]
-//	@Param			verbose	query	bool	false	"Verbose"
+//	@Param			verbose	query	bool	false	"Ayrıntılı"
 //
 //	@id				ListWorkspaces
 func ListWorkspaces(ctx *gin.Context) {
@@ -69,7 +69,7 @@ func ListWorkspaces(ctx *gin.Context) {
 	if verboseQuery != "" {
 		verbose, err = strconv.ParseBool(verboseQuery)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid value for verbose flag"))
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("ayrıntılı bayrağı için geçersiz değer"))
 			return
 		}
 	}
@@ -78,7 +78,7 @@ func ListWorkspaces(ctx *gin.Context) {
 
 	workspaceList, err := server.WorkspaceService.ListWorkspaces(ctx.Request.Context(), verbose)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to list workspaces: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("çalışma alanları listelenemedi: %w", err))
 		return
 	}
 
@@ -88,10 +88,10 @@ func ListWorkspaces(ctx *gin.Context) {
 // RemoveWorkspace 			godoc
 //
 //	@Tags			workspace
-//	@Summary		Remove workspace
-//	@Description	Remove workspace
-//	@Param			workspaceId	path	string	true	"Workspace ID"
-//	@Param			force		query	bool	false	"Force"
+//	@Summary		Çalışma alanını kaldır
+//	@Description	Çalışma alanını kaldır
+//	@Param			workspaceId	path	string	true	"Çalışma Alanı ID"
+//	@Param			force		query	bool	false	"Zorla"
 //	@Success		200
 //	@Router			/workspace/{workspaceId} [delete]
 //
@@ -105,7 +105,7 @@ func RemoveWorkspace(ctx *gin.Context) {
 	if forceQuery != "" {
 		force, err = strconv.ParseBool(forceQuery)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid value for force flag"))
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("zorla bayrağı için geçersiz değer"))
 			return
 		}
 	}
@@ -119,7 +119,7 @@ func RemoveWorkspace(ctx *gin.Context) {
 	}
 
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to remove workspace: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("çalışma alanı kaldırılamadı: %w", err))
 		return
 	}
 

@@ -1,5 +1,5 @@
-// Copyright 2024 Daytona Platforms Inc.
-// SPDX-License-Identifier: Apache-2.0
+// Daytona Platforms Inc. 2024 Telif Hakkı
+// SPDX-Lisans: Apache-2.0
 
 package target
 
@@ -15,29 +15,29 @@ import (
 // RemoveTarget godoc
 //
 //	@Tags			target
-//	@Summary		Remove a target
-//	@Description	Remove a target
-//	@Param			target	path	string	true	"Target name"
+//	@Summary		Bir hedefi kaldır
+//	@Description	Bir hedefi kaldır
+//	@Param			target	path	string	true	"Hedef adı"
 //	@Success		204
 //	@Router			/target/{target} [delete]
 //
 //	@id				RemoveTarget
 func RemoveTarget(ctx *gin.Context) {
-	targetName := ctx.Param("target")
+	hedefAdi := ctx.Param("target")
 
 	server := server.GetInstance(nil)
 
-	target, err := server.ProviderTargetService.Find(&provider.TargetFilter{
-		Name: &targetName,
+	hedef, err := server.ProviderTargetService.Find(&provider.TargetFilter{
+		Name: &hedefAdi,
 	})
 	if err != nil {
-		ctx.AbortWithError(http.StatusNotFound, fmt.Errorf("failed to find target: %w", err))
+		ctx.AbortWithError(http.StatusNotFound, fmt.Errorf("hedef bulunamadı: %w", err))
 		return
 	}
 
-	err = server.ProviderTargetService.Delete(target)
+	err = server.ProviderTargetService.Delete(hedef)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to remove target: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("hedef kaldırılamadı: %w", err))
 		return
 	}
 

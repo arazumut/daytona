@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// 2024 Daytona Platforms Inc. Tüm Hakları Saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package server
@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// TailscaleServer arayüzü, Tailscale sunucusuyla ilgili işlemleri tanımlar.
 type TailscaleServer interface {
 	Connect() error
 	CreateAuthKey() (string, error)
@@ -17,22 +18,26 @@ type TailscaleServer interface {
 	Purge() error
 }
 
+// ILocalContainerRegistry arayüzü, yerel konteyner kayıt defteri işlemlerini tanımlar.
 type ILocalContainerRegistry interface {
 	Start() error
 	Stop() error
 	Purge() error
 }
 
+// FRPSConfig, FRP sunucusu yapılandırmasını temsil eder.
 type FRPSConfig struct {
 	Domain   string `json:"domain" validate:"required"`
 	Port     uint32 `json:"port" validate:"required"`
 	Protocol string `json:"protocol" validate:"required"`
 } // @name FRPSConfig
 
+// NetworkKey, ağ anahtarını temsil eder.
 type NetworkKey struct {
 	Key string `json:"key" validate:"required"`
 } // @name NetworkKey
 
+// Config, sunucu yapılandırmasını temsil eder.
 type Config struct {
 	ProvidersDir              string      `json:"providersDir" validate:"required"`
 	RegistryUrl               string      `json:"registryUrl" validate:"required"`

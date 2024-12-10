@@ -9,6 +9,7 @@ import (
 	"github.com/daytonaio/daytona/pkg/workspace/project"
 )
 
+// StopWorkspace işlevi, belirli bir çalışma alanını durdurur.
 func (p *Provisioner) StopWorkspace(workspace *workspace.Workspace, target *provider.ProviderTarget) error {
 	targetProvider, err := p.providerManager.GetProvider(target.ProviderInfo.Name)
 	if err != nil {
@@ -23,6 +24,7 @@ func (p *Provisioner) StopWorkspace(workspace *workspace.Workspace, target *prov
 	return err
 }
 
+// StopProject işlevi, belirli bir projeyi durdurur.
 func (p *Provisioner) StopProject(proj *project.Project, target *provider.ProviderTarget) error {
 	targetProvider, err := p.providerManager.GetProvider(target.ProviderInfo.Name)
 	if err != nil {

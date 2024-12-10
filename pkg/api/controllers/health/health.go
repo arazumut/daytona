@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// 2024 Daytona Platforms Inc. Tüm hakları saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package health
@@ -9,15 +9,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// HealthCheck 			godoc
+// SağlıkKontrolü 			godoc
 //
-//	@Summary		Health check
-//	@Description	Health check
-//	@Produce		json
-//	@Success		200	{object}	map[string]string
-//	@Router			/health [get]
+//	@Özet			Sağlık kontrolü
+//	@Açıklama		Sağlık kontrolü
+//	@Üret			json
+//	@Başarı			200	{object}	map[string]string
+//	@Yol			/health [get]
 //
-//	@id				HealthCheck
-func HealthCheck(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
+//	@id				SağlıkKontrolü
+func SağlıkKontrolü(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, gin.H{"durum": "tamam"})
 }

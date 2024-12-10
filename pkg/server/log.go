@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// 2024 Daytona Platforms Inc. Tüm hakları saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package server
@@ -23,7 +23,7 @@ func (f *logFormatter) Format(entry *log.Entry) ([]byte, error) {
 	}
 
 	if f.file != nil {
-		// Write to file
+		// Dosyaya yaz
 		_, err = f.file.Write(formatted)
 		if err != nil {
 			return nil, err
@@ -34,9 +34,9 @@ func (f *logFormatter) Format(entry *log.Entry) ([]byte, error) {
 }
 
 func (s *Server) initLogs() error {
-	filePath := s.config.LogFilePath
+	dosyaYolu := s.config.LogFilePath
 
-	file, err := os.OpenFile(filePath, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
+	dosya, err := os.OpenFile(dosyaYolu, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
@@ -45,31 +45,31 @@ func (s *Server) initLogs() error {
 		textFormatter: &log.TextFormatter{
 			ForceColors: true,
 		},
-		file: file,
+		file: dosya,
 	}
 
 	log.SetFormatter(logFormatter)
 
-	frpLogLevel := "error"
+	frpLogSeviyesi := "error"
 	if os.Getenv("FRP_LOG_LEVEL") != "" {
-		frpLogLevel = os.Getenv("FRP_LOG_LEVEL")
+		frpLogSeviyesi = os.Getenv("FRP_LOG_LEVEL")
 	}
 
-	frpOutput := filePath
+	frpCikti := dosyaYolu
 	if os.Getenv("FRP_LOG_OUTPUT") != "" {
-		frpOutput = os.Getenv("FRP_LOG_OUTPUT")
+		frpCikti = os.Getenv("FRP_LOG_OUTPUT")
 	}
 
-	frp_log.InitLogger(frpOutput, frpLogLevel, 0, false)
+	frp_log.InitLogger(frpCikti, frpLogSeviyesi, 0, false)
 
 	return nil
 }
 
 func (s *Server) GetLogReader() (io.Reader, error) {
-	file, err := os.Open(s.config.LogFilePath)
+	dosya, err := os.Open(s.config.LogFilePath)
 	if err != nil {
 		return nil, err
 	}
 
-	return file, nil
+	return dosya, nil
 }

@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// 2024 Daytona Platforms Inc. Telif Hakkı
 // SPDX-License-Identifier: Apache-2.0
 
 package log
@@ -17,71 +17,71 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const TIMEOUT = 300 * time.Millisecond
+const ZAMAN_ASIMI = 300 * time.Millisecond
 
-var upgrader = websocket.Upgrader{
+var yükseltici = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
 }
 
-func writeToWs(ws *websocket.Conn, c chan []byte, errChan chan error) {
+func wsYaz(ws *websocket.Conn, c chan []byte, hataKanalı chan error) {
 	for {
-		err := ws.WriteMessage(websocket.TextMessage, <-c)
-		if err != nil {
-			errChan <- err
+		hata := ws.WriteMessage(websocket.TextMessage, <-c)
+		if hata != nil {
+			hataKanalı <- hata
 			break
 		}
 	}
 }
 
-func writeJSONToWs(ws *websocket.Conn, c chan interface{}, errChan chan error) {
+func wsJSONYaz(ws *websocket.Conn, c chan interface{}, hataKanalı chan error) {
 	for {
-		err := ws.WriteJSON(<-c)
-		if err != nil {
-			errChan <- err
+		hata := ws.WriteJSON(<-c)
+		if hata != nil {
+			hataKanalı <- hata
 			break
 		}
 	}
 }
 
-// readLog reads from the logReader and writes to the websocket.
-// T is the type of the message to be read from the logReader
-func readLog[T any](ginCtx *gin.Context, logReader io.Reader, readFunc func(context.Context, io.Reader, bool, chan T, chan error), wsWriteFunc func(*websocket.Conn, chan T, chan error)) {
-	followQuery := ginCtx.Query("follow")
-	follow := followQuery == "true"
+// logOku, logReader'dan okur ve websocket'e yazar.
+// T, logReader'dan okunacak mesajın türüdür
+func logOku[T any](ginCtx *gin.Context, logReader io.Reader, okumaFonksiyonu func(context.Context, io.Reader, bool, chan T, chan error), wsYazmaFonksiyonu func(*websocket.Conn, chan T, chan error)) {
+	takipSorgusu := ginCtx.Query("follow")
+	takip := takipSorgusu == "true"
 
-	ws, err := upgrader.Upgrade(ginCtx.Writer, ginCtx.Request, nil)
-	if err != nil {
-		log.Error(err)
+	ws, hata := yükseltici.Upgrade(ginCtx.Writer, ginCtx.Request, nil)
+	if hata != nil {
+		log.Error(hata)
 		return
 	}
 
 	defer func() {
-		closeErr := websocket.CloseNormalClosure
-		if !errors.Is(err, io.EOF) {
-			closeErr = websocket.CloseInternalServerErr
+		kapatmaHatası := websocket.CloseNormalClosure
+		if !errors.Is(hata, io.EOF) {
+			kapatmaHatası = websocket.CloseInternalServerErr
 		}
-		err := ws.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(closeErr, ""), time.Now().Add(time.Second))
-		if err != nil {
-			log.Trace(err)
+		hata := ws.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(kapatmaHatası, ""), time.Now().Add(time.Second))
+		if hata != nil {
+			log.Trace(hata)
 		}
 		ws.Close()
 	}()
 
-	msgChannel := make(chan T)
-	errChannel := make(chan error)
-	ctx, cancel := context.WithCancel(ginCtx.Request.Context())
+	mesajKanalı := make(chan T)
+	hataKanalı := make(chan error)
+	ctx, iptal := context.WithCancel(ginCtx.Request.Context())
 
-	defer cancel()
-	go readFunc(ctx, logReader, follow, msgChannel, errChannel)
-	go wsWriteFunc(ws, msgChannel, errChannel)
+	defer iptal()
+	go okumaFonksiyonu(ctx, logReader, takip, mesajKanalı, hataKanalı)
+	go wsYazmaFonksiyonu(ws, mesajKanalı, hataKanalı)
 
-	readErr := make(chan error)
+	okumaHatası := make(chan error)
 	go func() {
 		for {
-			_, _, err := ws.ReadMessage()
-			readErr <- err
+			_, _, hata := ws.ReadMessage()
+			okumaHatası <- hata
 		}
 	}()
 
@@ -89,129 +89,129 @@ func readLog[T any](ginCtx *gin.Context, logReader io.Reader, readFunc func(cont
 		select {
 		case <-ctx.Done():
 			return
-		case err = <-errChannel:
-			if err != nil {
-				if !errors.Is(err, io.EOF) {
-					log.Error(err)
+		case hata = <-hataKanalı:
+			if hata != nil {
+				if !errors.Is(hata, io.EOF) {
+					log.Error(hata)
 				}
-				cancel()
+				iptal()
 				return
 			}
-		case err := <-readErr:
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure, websocket.CloseAbnormalClosure) {
-				log.Error(err)
+		case hata := <-okumaHatası:
+			if websocket.IsUnexpectedCloseError(hata, websocket.CloseNormalClosure, websocket.CloseAbnormalClosure) {
+				log.Error(hata)
 			}
-			if err != nil {
+			if hata != nil {
 				return
 			}
 		}
 	}
 }
 
-func ReadServerLog(ginCtx *gin.Context) {
-	server := server.GetInstance(nil)
-	retryQuery := ginCtx.DefaultQuery("retry", "true")
-	retry := retryQuery == "true"
+func SunucuLoguOku(ginCtx *gin.Context) {
+	sunucu := server.GetInstance(nil)
+	tekrarDeneSorgusu := ginCtx.DefaultQuery("retry", "true")
+	tekrarDene := tekrarDeneSorgusu == "true"
 
-	if retry {
+	if tekrarDene {
 		for {
-			reader, err := server.GetLogReader()
-			if err == nil {
-				readLog(ginCtx, reader, util.ReadLog, writeToWs)
+			okuyucu, hata := sunucu.GetLogReader()
+			if hata == nil {
+				logOku(ginCtx, okuyucu, util.ReadLog, wsYaz)
 				return
 			}
-			time.Sleep(TIMEOUT)
+			time.Sleep(ZAMAN_ASIMI)
 		}
 	}
 
-	reader, err := server.GetLogReader()
-	if err != nil {
-		ginCtx.AbortWithError(http.StatusInternalServerError, err)
+	okuyucu, hata := sunucu.GetLogReader()
+	if hata != nil {
+		ginCtx.AbortWithError(http.StatusInternalServerError, hata)
 		return
 	}
 
-	readLog(ginCtx, reader, util.ReadLog, writeToWs)
+	logOku(ginCtx, okuyucu, util.ReadLog, wsYaz)
 }
 
-func ReadWorkspaceLog(ginCtx *gin.Context) {
-	workspaceId := ginCtx.Param("workspaceId")
-	retryQuery := ginCtx.DefaultQuery("retry", "true")
-	retry := retryQuery == "true"
+func ÇalışmaAlanıLoguOku(ginCtx *gin.Context) {
+	çalışmaAlanıId := ginCtx.Param("workspaceId")
+	tekrarDeneSorgusu := ginCtx.DefaultQuery("retry", "true")
+	tekrarDene := tekrarDeneSorgusu == "true"
 
-	server := server.GetInstance(nil)
+	sunucu := server.GetInstance(nil)
 
-	if retry {
+	if tekrarDene {
 		for {
-			wsLogReader, err := server.WorkspaceService.GetWorkspaceLogReader(workspaceId)
-			if err == nil {
-				readLog(ginCtx, wsLogReader, util.ReadJSONLog, writeJSONToWs)
+			wsLogOkuyucu, hata := sunucu.WorkspaceService.GetWorkspaceLogReader(çalışmaAlanıId)
+			if hata == nil {
+				logOku(ginCtx, wsLogOkuyucu, util.ReadJSONLog, wsJSONYaz)
 				return
 			}
-			time.Sleep(TIMEOUT)
+			time.Sleep(ZAMAN_ASIMI)
 		}
 	}
 
-	wsLogReader, err := server.WorkspaceService.GetWorkspaceLogReader(workspaceId)
-	if err != nil {
-		ginCtx.AbortWithError(http.StatusInternalServerError, err)
+	wsLogOkuyucu, hata := sunucu.WorkspaceService.GetWorkspaceLogReader(çalışmaAlanıId)
+	if hata != nil {
+		ginCtx.AbortWithError(http.StatusInternalServerError, hata)
 		return
 	}
 
-	readLog(ginCtx, wsLogReader, util.ReadJSONLog, writeJSONToWs)
+	logOku(ginCtx, wsLogOkuyucu, util.ReadJSONLog, wsJSONYaz)
 }
 
-func ReadProjectLog(ginCtx *gin.Context) {
-	workspaceId := ginCtx.Param("workspaceId")
-	projectName := ginCtx.Param("projectName")
-	retryQuery := ginCtx.DefaultQuery("retry", "true")
-	retry := retryQuery == "true"
+func ProjeLoguOku(ginCtx *gin.Context) {
+	çalışmaAlanıId := ginCtx.Param("workspaceId")
+	projeAdı := ginCtx.Param("projectName")
+	tekrarDeneSorgusu := ginCtx.DefaultQuery("retry", "true")
+	tekrarDene := tekrarDeneSorgusu == "true"
 
-	server := server.GetInstance(nil)
+	sunucu := server.GetInstance(nil)
 
-	if retry {
+	if tekrarDene {
 		for {
-			projectLogReader, err := server.WorkspaceService.GetProjectLogReader(workspaceId, projectName)
-			if err == nil {
-				readLog(ginCtx, projectLogReader, util.ReadJSONLog, writeJSONToWs)
+			projeLogOkuyucu, hata := sunucu.WorkspaceService.GetProjectLogReader(çalışmaAlanıId, projeAdı)
+			if hata == nil {
+				logOku(ginCtx, projeLogOkuyucu, util.ReadJSONLog, wsJSONYaz)
 				return
 			}
-			time.Sleep(TIMEOUT)
+			time.Sleep(ZAMAN_ASIMI)
 		}
 	}
 
-	projectLogReader, err := server.WorkspaceService.GetProjectLogReader(workspaceId, projectName)
-	if err != nil {
-		ginCtx.AbortWithError(http.StatusInternalServerError, err)
+	projeLogOkuyucu, hata := sunucu.WorkspaceService.GetProjectLogReader(çalışmaAlanıId, projeAdı)
+	if hata != nil {
+		ginCtx.AbortWithError(http.StatusInternalServerError, hata)
 		return
 	}
 
-	readLog(ginCtx, projectLogReader, util.ReadJSONLog, writeJSONToWs)
+	logOku(ginCtx, projeLogOkuyucu, util.ReadJSONLog, wsJSONYaz)
 }
 
-func ReadBuildLog(ginCtx *gin.Context) {
-	buildId := ginCtx.Param("buildId")
-	retryQuery := ginCtx.DefaultQuery("retry", "true")
-	retry := retryQuery == "true"
+func YapıLoguOku(ginCtx *gin.Context) {
+	yapıId := ginCtx.Param("buildId")
+	tekrarDeneSorgusu := ginCtx.DefaultQuery("retry", "true")
+	tekrarDene := tekrarDeneSorgusu == "true"
 
-	server := server.GetInstance(nil)
+	sunucu := server.GetInstance(nil)
 
-	if retry {
+	if tekrarDene {
 		for {
-			buildLogReader, err := server.BuildService.GetBuildLogReader(buildId)
+			yapıLogOkuyucu, hata := sunucu.BuildService.GetBuildLogReader(yapıId)
 
-			if err == nil {
-				readLog(ginCtx, buildLogReader, util.ReadJSONLog, writeJSONToWs)
+			if hata == nil {
+				logOku(ginCtx, yapıLogOkuyucu, util.ReadJSONLog, wsJSONYaz)
 				return
 			}
-			time.Sleep(TIMEOUT)
+			time.Sleep(ZAMAN_ASIMI)
 		}
 	}
 
-	buildLogReader, err := server.BuildService.GetBuildLogReader(buildId)
-	if err != nil {
-		ginCtx.AbortWithError(http.StatusInternalServerError, err)
+	yapıLogOkuyucu, hata := sunucu.BuildService.GetBuildLogReader(yapıId)
+	if hata != nil {
+		ginCtx.AbortWithError(http.StatusInternalServerError, hata)
 		return
 	}
 
-	readLog(ginCtx, buildLogReader, util.ReadJSONLog, writeJSONToWs)
+	logOku(ginCtx, yapıLogOkuyucu, util.ReadJSONLog, wsJSONYaz)
 }

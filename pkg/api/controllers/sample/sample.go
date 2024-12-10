@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package sample
@@ -13,8 +13,8 @@ import (
 // ListSamples 			godoc
 //
 //	@Tags			sample
-//	@Summary		List samples
-//	@Description	List samples
+//	@Summary		Örnekleri listele
+//	@Description	Örnekleri listele
 //	@Produce		json
 //	@Success		200	{array}	Sample
 //	@Router			/sample [get]

@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package server
@@ -14,8 +14,8 @@ import (
 // GetConfig 			godoc
 //
 //	@Tags			server
-//	@Summary		Get the server configuration
-//	@Description	Get the server configuration
+//	@Summary		Sunucu yapılandırmasını al
+//	@Description	Sunucu yapılandırmasını al
 //	@Produce		json
 //	@Success		200	{object}	ServerConfig
 //	@Router			/server/config [get]
@@ -24,7 +24,7 @@ import (
 func GetConfig(ctx *gin.Context) {
 	config, err := server.GetConfig()
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get config: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("yapılandırma alınamadı: %w", err))
 		return
 	}
 
@@ -34,11 +34,11 @@ func GetConfig(ctx *gin.Context) {
 // SetConfig 			godoc
 //
 //	@Tags			server
-//	@Summary		Set the server configuration
-//	@Description	Set the server configuration
+//	@Summary		Sunucu yapılandırmasını ayarla
+//	@Description	Sunucu yapılandırmasını ayarla
 //	@Accept			json
 //	@Produce		json
-//	@Param			config	body		ServerConfig	true	"Server configuration"
+//	@Param			config	body		ServerConfig	true	"Sunucu yapılandırması"
 //	@Success		200		{object}	ServerConfig
 //	@Router			/server/config [post]
 //
@@ -47,13 +47,13 @@ func SetConfig(ctx *gin.Context) {
 	var c server.Config
 	err := ctx.BindJSON(&c)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %w", err))
 		return
 	}
 
 	err = server.Save(c)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to save config: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("yapılandırma kaydedilemedi: %w", err))
 		return
 	}
 
@@ -63,8 +63,8 @@ func SetConfig(ctx *gin.Context) {
 // GenerateNetworkKey 		godoc
 //
 //	@Tags			server
-//	@Summary		Generate a new authentication key
-//	@Description	Generate a new authentication key
+//	@Summary		Yeni bir kimlik doğrulama anahtarı oluştur
+//	@Description	Yeni bir kimlik doğrulama anahtarı oluştur
 //	@Produce		json
 //	@Success		200	{object}	NetworkKey
 //	@Router			/server/network-key [post]
@@ -75,7 +75,7 @@ func GenerateNetworkKey(ctx *gin.Context) {
 
 	authKey, err := s.TailscaleServer.CreateAuthKey()
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to generate network key: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("ağ anahtarı oluşturulamadı: %w", err))
 		return
 	}
 

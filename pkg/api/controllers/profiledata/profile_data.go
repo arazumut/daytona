@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package profiledata
@@ -12,17 +12,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetProfileData godoc
+// ProfilVerisiniGetir godoc
 //
-//	@Tags			profile
-//	@Summary		Get profile data
-//	@Description	Get profile data
+//	@Tags			profil
+//	@Summary		Profil verisini getir
+//	@Description	Profil verisini getir
 //	@Accept			json
 //	@Success		200 {object} profiledata.ProfileData
-//	@Router			/profile [get]
+//	@Router			/profil [get]
 //
-//	@id				GetProfileData
-func GetProfileData(ctx *gin.Context) {
+//	@id				ProfilVerisiniGetir
+func ProfilVerisiniGetir(ctx *gin.Context) {
 	server := server.GetInstance(nil)
 	profileData, err := server.ProfileDataService.Get()
 	if err != nil {
@@ -30,52 +30,52 @@ func GetProfileData(ctx *gin.Context) {
 			ctx.JSON(200, &profiledata.ProfileData{})
 			return
 		}
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get profile data: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("profil verisi alınamadı: %w", err))
 		return
 	}
 
 	ctx.JSON(200, profileData)
 }
 
-// SetProfileData godoc
+// ProfilVerisiniAyarla godoc
 //
-//	@Tags			profile
-//	@Summary		Set profile data
-//	@Description	Set profile data
+//	@Tags			profil
+//	@Summary		Profil verisini ayarla
+//	@Description	Profil verisini ayarla
 //	@Accept			json
-//	@Param			profileData	body	profiledata.ProfileData	true	"Profile data"
+//	@Param			profileData	body	profiledata.ProfileData	true	"Profil verisi"
 //	@Success		201
-//	@Router			/profile [put]
+//	@Router			/profil [put]
 //
-//	@id				SetProfileData
-func SetProfileData(ctx *gin.Context) {
+//	@id				ProfilVerisiniAyarla
+func ProfilVerisiniAyarla(ctx *gin.Context) {
 	var req profiledata.ProfileData
 	err := ctx.BindJSON(&req)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %w", err))
 		return
 	}
 
 	server := server.GetInstance(nil)
 	err = server.ProfileDataService.Save(&req)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to save profile data: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("profil verisi kaydedilemedi: %w", err))
 		return
 	}
 
 	ctx.Status(201)
 }
 
-// DeleteProfileData godoc
+// ProfilVerisiniSil godoc
 //
-//	@Tags			profile
-//	@Summary		Delete profile data
-//	@Description	Delete profile data
+//	@Tags			profil
+//	@Summary		Profil verisini sil
+//	@Description	Profil verisini sil
 //	@Success		204
-//	@Router			/profile [delete]
+//	@Router			/profil [delete]
 //
-//	@id				DeleteProfileData
-func DeleteProfileData(ctx *gin.Context) {
+//	@id				ProfilVerisiniSil
+func ProfilVerisiniSil(ctx *gin.Context) {
 	server := server.GetInstance(nil)
 	err := server.ProfileDataService.Delete()
 	if err != nil {
@@ -83,7 +83,7 @@ func DeleteProfileData(ctx *gin.Context) {
 			ctx.Status(204)
 			return
 		}
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get profile data: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("profil verisi silinemedi: %w", err))
 		return
 	}
 

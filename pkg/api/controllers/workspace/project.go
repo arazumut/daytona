@@ -17,11 +17,11 @@ import (
 // SetProjectState 			godoc
 //
 //	@Tags			workspace
-//	@Summary		Set project state
-//	@Description	Set project state
-//	@Param			workspaceId	path	string			true	"Workspace ID or Name"
-//	@Param			projectId	path	string			true	"Project ID"
-//	@Param			setState	body	SetProjectState	true	"Set State"
+//	@Summary		Proje durumunu ayarla
+//	@Description	Proje durumunu ayarla
+//	@Param			workspaceId	path	string			true	"Çalışma Alanı ID veya Adı"
+//	@Param			projectId	path	string			true	"Proje ID"
+//	@Param			setState	body	SetProjectState	true	"Durumu Ayarla"
 //	@Success		200
 //	@Router			/workspace/{workspaceId}/{projectId}/state [post]
 //
@@ -33,7 +33,7 @@ func SetProjectState(ctx *gin.Context) {
 	var setProjectStateDTO dto.SetProjectState
 	err := ctx.BindJSON(&setProjectStateDTO)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %w", err))
 		return
 	}
 
@@ -45,7 +45,7 @@ func SetProjectState(ctx *gin.Context) {
 		GitStatus: setProjectStateDTO.GitStatus,
 	})
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to stop workspace %s: %w", workspaceId, err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("çalışma alanı %s durdurulamadı: %w", workspaceId, err))
 		return
 	}
 

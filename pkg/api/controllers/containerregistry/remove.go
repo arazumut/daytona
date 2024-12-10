@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Tüm Hakları Saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package containerregistry
@@ -15,9 +15,9 @@ import (
 // RemoveContainerRegistry godoc
 //
 //	@Tags			container-registry
-//	@Summary		Remove a container registry credentials
-//	@Description	Remove a container registry credentials
-//	@Param			server path	string	true	"Container Registry server name"
+//	@Summary		Bir konteyner kayıt defteri kimlik bilgilerini kaldır
+//	@Description	Bir konteyner kayıt defteri kimlik bilgilerini kaldır
+//	@Param			server path	string	true	"Konteyner Kayıt Defteri sunucu adı"
 //	@Success		204
 //	@Router			/container-registry/{server} [delete]
 //
@@ -27,17 +27,17 @@ func RemoveContainerRegistry(ctx *gin.Context) {
 
 	decodedServerURL, err := url.QueryUnescape(crServer)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to decode server URL: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("sunucu URL'si çözülemedi: %w", err))
 		return
 	}
 
-	server := server.GetInstance(nil)
+	serverInstance := server.GetInstance(nil)
 
-	err = server.ContainerRegistryService.Delete(decodedServerURL)
+	err = serverInstance.ContainerRegistryService.Delete(decodedServerURL)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to remove container registry: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("konteyner kayıt defteri kaldırılamadı: %w", err))
 		return
 	}
 
-	ctx.Status(204)
+	ctx.Status(http.StatusNoContent)
 }

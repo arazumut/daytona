@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Telif Hakkı
 // SPDX-License-Identifier: Apache-2.0
 
 package gitprovider
@@ -14,10 +14,10 @@ import (
 // GetGitUser 			godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Get Git context
-//	@Description	Get Git context
+//	@Summary		Git Kullanıcı Bilgilerini Getir
+//	@Description	Git Kullanıcı Bilgilerini Getir
 //	@Produce		json
-//	@Param			gitProviderId	path		string	true	"Git Provider Id"
+//	@Param			gitProviderId	path		string	true	"Git Sağlayıcı Id"
 //	@Success		200				{object}	GitUser
 //	@Router			/gitprovider/{gitProviderId}/user [get]
 //
@@ -32,8 +32,9 @@ func GetGitUser(ctx *gin.Context) {
 		statusCode, message, codeErr := controllers.GetHTTPStatusCodeAndMessageFromError(err)
 		if codeErr != nil {
 			ctx.AbortWithError(statusCode, codeErr)
+		} else {
+			ctx.AbortWithError(statusCode, errors.New(message))
 		}
-		ctx.AbortWithError(statusCode, errors.New(message))
 		return
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// 2024 Daytona Platforms Inc. Tüm hakları saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package headscale

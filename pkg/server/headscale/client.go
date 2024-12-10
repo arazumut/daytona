@@ -16,15 +16,19 @@ import (
 )
 
 func (s *HeadscaleServer) getClient() (context.Context, v1.HeadscaleServiceClient, *grpc.ClientConn, context.CancelFunc, error) {
+	// Headscale yapılandırmasını al
 	cfg, err := s.getHeadscaleConfig()
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
 
+	// Bağlantı için bir zaman aşımı bağlamı oluştur
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.CLI.Timeout)
 
+	// Unix soket adresini al
 	address := cfg.UnixSocket
 
+	// gRPC bağlantı seçeneklerini ayarla
 	grpcOptions := []grpc.DialOption{
 		grpc.WithConnectParams(grpc.ConnectParams{
 			Backoff: backoff.Config{
@@ -37,13 +41,15 @@ func (s *HeadscaleServer) getClient() (context.Context, v1.HeadscaleServiceClien
 		grpc.WithContextDialer(util.GrpcSocketDialer),
 	}
 
-	log.Trace().Caller().Str("address", address).Msg("Connecting via gRPC")
+	// gRPC üzerinden bağlan
+	log.Trace().Caller().Str("address", address).Msg("gRPC üzerinden bağlanılıyor")
 	conn, err := grpc.DialContext(ctx, address, grpcOptions...) // nolint:staticcheck
 	if err != nil {
 		cancel()
 		return nil, nil, nil, nil, err
 	}
 
+	// Headscale hizmet istemcisini oluştur
 	client := v1.NewHeadscaleServiceClient(conn)
 
 	return ctx, client, conn, cancel, nil

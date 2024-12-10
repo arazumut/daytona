@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Telif Hakkı
 // SPDX-License-Identifier: Apache-2.0
 
 package middlewares
@@ -10,26 +10,34 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ProjectAuthMiddleware() gin.HandlerFunc {
+// Proje yetkilendirme ara yazılımı
+func ProjeYetkilendirmeAraYazılımı() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		// Authorization başlığını al
 		bearerToken := ctx.GetHeader("Authorization")
 		if bearerToken == "" {
-			ctx.AbortWithError(401, errors.New("unauthorized"))
+			// Eğer başlık yoksa yetkisiz hatası döndür
+			ctx.AbortWithError(401, errors.New("yetkisiz"))
 			return
 		}
 
+		// Token'ı ayıkla
 		token := ExtractToken(bearerToken)
 		if token == "" {
-			ctx.AbortWithError(401, errors.New("unauthorized"))
+			// Eğer token yoksa yetkisiz hatası döndür
+			ctx.AbortWithError(401, errors.New("yetkisiz"))
 			return
 		}
 
+		// Sunucu örneğini al
 		server := server.GetInstance(nil)
 
+		// Token geçerli bir proje veya çalışma alanı API anahtarı değilse yetkisiz hatası döndür
 		if !server.ApiKeyService.IsProjectApiKey(token) && !server.ApiKeyService.IsWorkspaceApiKey(token) {
-			ctx.AbortWithError(401, errors.New("unauthorized"))
+			ctx.AbortWithError(401, errors.New("yetkisiz"))
 		}
 
+		// İşleme devam et
 		ctx.Next()
 	}
 }

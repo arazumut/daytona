@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Telif Hakkı
 // SPDX-License-Identifier: Apache-2.0
 
 package workspace
@@ -14,9 +14,9 @@ import (
 // StopWorkspace 			godoc
 //
 //	@Tags			workspace
-//	@Summary		Stop workspace
-//	@Description	Stop workspace
-//	@Param			workspaceId	path	string	true	"Workspace ID or Name"
+//	@Summary		Çalışma alanını durdur
+//	@Description	Çalışma alanını durdur
+//	@Param			workspaceId	path	string	true	"Çalışma Alanı ID veya Adı"
 //	@Success		200
 //	@Router			/workspace/{workspaceId}/stop [post]
 //
@@ -28,7 +28,7 @@ func StopWorkspace(ctx *gin.Context) {
 
 	err := server.WorkspaceService.StopWorkspace(ctx.Request.Context(), workspaceId)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to stop workspace %s: %w", workspaceId, err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("çalışma alanı %s durdurulamadı: %w", workspaceId, err))
 		return
 	}
 
@@ -38,10 +38,10 @@ func StopWorkspace(ctx *gin.Context) {
 // StopProject 			godoc
 //
 //	@Tags			workspace
-//	@Summary		Stop project
-//	@Description	Stop project
-//	@Param			workspaceId	path	string	true	"Workspace ID or Name"
-//	@Param			projectId	path	string	true	"Project ID"
+//	@Summary		Projeyi durdur
+//	@Description	Projeyi durdur
+//	@Param			workspaceId	path	string	true	"Çalışma Alanı ID veya Adı"
+//	@Param			projectId	path	string	true	"Proje ID"
 //	@Success		200
 //	@Router			/workspace/{workspaceId}/{projectId}/stop [post]
 //
@@ -54,7 +54,7 @@ func StopProject(ctx *gin.Context) {
 
 	err := server.WorkspaceService.StopProject(ctx.Request.Context(), workspaceId, projectId)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to stop project %s: %w", projectId, err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("proje %s durdurulamadı: %w", projectId, err))
 		return
 	}
 

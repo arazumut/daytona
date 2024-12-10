@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Tüm Hakları Saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package provider
@@ -14,10 +14,10 @@ import (
 // UninstallProvider godoc
 //
 //	@Tags			provider
-//	@Summary		Uninstall a provider
-//	@Description	Uninstall a provider
+//	@Summary		Bir sağlayıcıyı kaldır
+//	@Description	Bir sağlayıcıyı kaldır
 //	@Accept			json
-//	@Param			provider	path	string	true	"Provider to uninstall"
+//	@Param			provider	path	string	true	"Kaldırılacak sağlayıcı"
 //	@Success		200
 //	@Router			/provider/{provider}/uninstall [post]
 //
@@ -29,7 +29,7 @@ func UninstallProvider(ctx *gin.Context) {
 
 	err := server.ProviderManager.UninstallProvider(provider)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to uninstall provider: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("sağlayıcı kaldırılamadı: %w", err))
 		return
 	}
 

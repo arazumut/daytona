@@ -14,7 +14,7 @@ import (
 	daytona_os "github.com/daytonaio/daytona/pkg/os"
 )
 
-// Check if the requested binary is already downloaded, if not, download it
+// İstenen binary'nin zaten indirilip indirilmediğini kontrol et, eğer indirilmemişse indir
 func (s *Server) GetBinaryPath(binaryName, binaryVersion string) (string, error) {
 	hostOs, err := daytona_os.GetOperatingSystem()
 	if err != nil {
@@ -24,12 +24,12 @@ func (s *Server) GetBinaryPath(binaryName, binaryVersion string) (string, error)
 	var binaryOs daytona_os.OperatingSystem
 	split := strings.Split(binaryName, "-")
 	if len(split) != 3 {
-		return "", fmt.Errorf("invalid binary name: %s", binaryName)
+		return "", fmt.Errorf("geçersiz binary adı: %s", binaryName)
 	}
 
 	binaryOs = daytona_os.OperatingSystem(fmt.Sprintf("%s-%s", split[1], strings.TrimSuffix(split[2], ".exe")))
 
-	// If the requested binary is the same as the host, return the current binary path
+	// İstenen binary host ile aynıysa, mevcut binary yolunu döndür
 	if *hostOs == binaryOs && binaryVersion == s.Version {
 		executable, err := os.Executable()
 		if err == nil {

@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package provider
@@ -15,8 +15,8 @@ import (
 // ListProviders godoc
 //
 //	@Tags			provider
-//	@Summary		List providers
-//	@Description	List providers
+//	@Summary		Servis sağlayıcıları listele
+//	@Description	Servis sağlayıcıları listele
 //	@Produce		json
 //	@Success		200	{array}	dto.Provider
 //	@Router			/provider [get]
@@ -26,20 +26,20 @@ func ListProviders(ctx *gin.Context) {
 	server := server.GetInstance(nil)
 	providers := server.ProviderManager.GetProviders()
 
-	result := []dto.Provider{}
+	sonuc := []dto.Provider{}
 	for _, provider := range providers {
-		info, err := provider.GetInfo()
+		bilgi, err := provider.GetInfo()
 		if err != nil {
-			ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get provider: %w", err))
+			ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("sağlayıcı alınamadı: %w", err))
 			return
 		}
 
-		result = append(result, dto.Provider{
-			Name:    info.Name,
-			Label:   info.Label,
-			Version: info.Version,
+		sonuc = append(sonuc, dto.Provider{
+			Name:    bilgi.Name,
+			Label:   bilgi.Label,
+			Version: bilgi.Version,
 		})
 	}
 
-	ctx.JSON(200, result)
+	ctx.JSON(200, sonuc)
 }

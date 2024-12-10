@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package server
@@ -12,90 +12,90 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (s *Server) Purge(ctx context.Context, force bool) []error {
+func (s *Server) Temizle(ctx context.Context, zorla bool) []error {
 	log.SetLevel(log.PanicLevel)
 
-	telemetryEnabled := telemetry.TelemetryEnabled(ctx)
-	telemetryProps := map[string]interface{}{
-		"force":     force,
-		"server_id": s.Id,
+	telemetriAktif := telemetry.TelemetryEnabled(ctx)
+	telemetriOzellikleri := map[string]interface{}{
+		"zorla":     zorla,
+		"sunucu_id": s.Id,
 	}
 
-	if telemetryEnabled {
-		err := s.TelemetryService.TrackServerEvent(telemetry.ServerEventPurgeStarted, telemetry.ClientId(ctx), telemetryProps)
+	if telemetriAktif {
+		err := s.TelemetryService.TrackServerEvent(telemetry.ServerEventPurgeStarted, telemetry.ClientId(ctx), telemetriOzellikleri)
 		if err != nil {
 			log.Trace(err)
 		}
 	}
 
-	fmt.Println("Deleting all workspaces...")
+	fmt.Println("Tüm çalışma alanları siliniyor...")
 
 	err := server.Start()
 	if err != nil {
-		s.trackPurgeError(ctx, force, err)
+		s.temizlemeHatasiniIzle(ctx, zorla, err)
 		return []error{err}
 	}
 
-	workspaces, err := s.WorkspaceService.ListWorkspaces(ctx, false)
+	calismaAlanlari, err := s.WorkspaceService.ListWorkspaces(ctx, false)
 	if err != nil {
-		s.trackPurgeError(ctx, force, err)
-		if !force {
+		s.temizlemeHatasiniIzle(ctx, zorla, err)
+		if !zorla {
 			return []error{err}
 		}
 	}
 
 	if err == nil {
-		for _, workspace := range workspaces {
-			err := s.WorkspaceService.RemoveWorkspace(ctx, workspace.Id)
+		for _, calismaAlani := range calismaAlanlari {
+			err := s.WorkspaceService.RemoveWorkspace(ctx, calismaAlani.Id)
 			if err != nil {
-				s.trackPurgeError(ctx, force, err)
-				if !force {
+				s.temizlemeHatasiniIzle(ctx, zorla, err)
+				if !zorla {
 					return []error{err}
 				} else {
-					fmt.Printf("Failed to delete %s: %v\n", workspace.Name, err)
+					fmt.Printf("%s silinemedi: %v\n", calismaAlani.Name, err)
 				}
 			} else {
-				fmt.Printf("Workspace %s deleted\n", workspace.Name)
+				fmt.Printf("Çalışma alanı %s silindi\n", calismaAlani.Name)
 			}
 		}
 	} else {
-		fmt.Printf("Failed to list workspaces: %v\n", err)
+		fmt.Printf("Çalışma alanları listelenemedi: %v\n", err)
 	}
 
-	fmt.Println("Purging providers...")
+	fmt.Println("Sağlayıcılar temizleniyor...")
 	err = s.ProviderManager.Purge()
 	if err != nil {
-		s.trackPurgeError(ctx, force, err)
-		if !force {
+		s.temizlemeHatasiniIzle(ctx, zorla, err)
+		if !zorla {
 			return []error{err}
 		} else {
-			fmt.Printf("Failed to purge providers: %v\n", err)
+			fmt.Printf("Sağlayıcılar temizlenemedi: %v\n", err)
 		}
 	}
 
-	fmt.Println("Purging builds...")
-	errs := s.BuildService.MarkForDeletion(nil, force)
-	if len(errs) > 0 {
-		s.trackPurgeError(ctx, force, errs[0])
-		if !force {
-			return errs
+	fmt.Println("Yapılar temizleniyor...")
+	hatalar := s.BuildService.MarkForDeletion(nil, zorla)
+	if len(hatalar) > 0 {
+		s.temizlemeHatasiniIzle(ctx, zorla, hatalar[0])
+		if !zorla {
+			return hatalar
 		} else {
-			fmt.Printf("Failed to mark builds for deletion: %v\n", errs[0])
+			fmt.Printf("Yapılar silinmek üzere işaretlenemedi: %v\n", hatalar[0])
 		}
 	}
 
 	err = s.BuildService.AwaitEmptyList(time.Minute)
 	if err != nil {
-		s.trackPurgeError(ctx, force, err)
-		if !force {
+		s.temizlemeHatasiniIzle(ctx, zorla, err)
+		if !zorla {
 			return []error{err}
 		} else {
-			fmt.Printf("Failed to await empty build list: %v\n", err)
+			fmt.Printf("Boş yapı listesi beklenemedi: %v\n", err)
 		}
 	}
 
-	if telemetryEnabled {
-		err := s.TelemetryService.TrackServerEvent(telemetry.ServerEventPurgeCompleted, telemetry.ClientId(ctx), telemetryProps)
+	if telemetriAktif {
+		err := s.TelemetryService.TrackServerEvent(telemetry.ServerEventPurgeCompleted, telemetry.ClientId(ctx), telemetriOzellikleri)
 		if err != nil {
 			log.Trace(err)
 		}
@@ -104,16 +104,16 @@ func (s *Server) Purge(ctx context.Context, force bool) []error {
 	return nil
 }
 
-func (s *Server) trackPurgeError(ctx context.Context, force bool, err error) {
-	telemetryEnabled := telemetry.TelemetryEnabled(ctx)
-	telemetryProps := map[string]interface{}{
-		"server_id": s.Id,
-		"force":     force,
-		"error":     err.Error(),
+func (s *Server) temizlemeHatasiniIzle(ctx context.Context, zorla bool, err error) {
+	telemetriAktif := telemetry.TelemetryEnabled(ctx)
+	telemetriOzellikleri := map[string]interface{}{
+		"sunucu_id": s.Id,
+		"zorla":     zorla,
+		"hata":      err.Error(),
 	}
 
-	if telemetryEnabled {
-		err := s.TelemetryService.TrackServerEvent(telemetry.ServerEventPurgeError, telemetry.ClientId(ctx), telemetryProps)
+	if telemetriAktif {
+		err := s.TelemetryService.TrackServerEvent(telemetry.ServerEventPurgeError, telemetry.ClientId(ctx), telemetriOzellikleri)
 		if err != nil {
 			log.Trace(err)
 		}

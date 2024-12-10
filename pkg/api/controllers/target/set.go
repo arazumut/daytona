@@ -17,9 +17,9 @@ import (
 // SetTarget godoc
 //
 //	@Tags			target
-//	@Summary		Set a target
-//	@Description	Set a target
-//	@Param			target	body	CreateProviderTargetDTO	true	"Target to set"
+//	@Summary		Bir hedef belirle
+//	@Description	Bir hedef belirle
+//	@Param			target	body	CreateProviderTargetDTO	true	"Belirlenecek hedef"
 //	@Success		201
 //	@Router			/target [put]
 //
@@ -28,7 +28,7 @@ func SetTarget(ctx *gin.Context) {
 	var req dto.CreateProviderTargetDTO
 	err := ctx.BindJSON(&req)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %w", err))
 		return
 	}
 
@@ -38,7 +38,7 @@ func SetTarget(ctx *gin.Context) {
 
 	err = server.ProviderTargetService.Save(target)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to set target: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("hedef belirlenemedi: %w", err))
 		return
 	}
 
@@ -48,9 +48,9 @@ func SetTarget(ctx *gin.Context) {
 // SetDefaultTarget godoc
 //
 //	@Tags			target
-//	@Summary		Set target to default
-//	@Description	Set target to default
-//	@Param			target	path	string	true	"Target name"
+//	@Summary		Hedefi varsayılan olarak ayarla
+//	@Description	Hedefi varsayılan olarak ayarla
+//	@Param			target	path	string	true	"Hedef adı"
 //	@Success		200
 //	@Router			/target/{target}/set-default [patch]
 //
@@ -64,13 +64,13 @@ func SetDefaultTarget(ctx *gin.Context) {
 		Name: &targetName,
 	})
 	if err != nil {
-		ctx.AbortWithError(http.StatusNotFound, fmt.Errorf("failed to find target: %w", err))
+		ctx.AbortWithError(http.StatusNotFound, fmt.Errorf("hedef bulunamadı: %w", err))
 		return
 	}
 
 	err = server.ProviderTargetService.SetDefault(target)
 	if err != nil {
-		ctx.AbortWithError(http.StatusNotFound, fmt.Errorf("failed to set project config to default: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("hedef varsayılan olarak ayarlanamadı: %s", err.Error()))
 		return
 	}
 

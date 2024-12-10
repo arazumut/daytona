@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Tüm Hakları Saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package workspace
@@ -15,9 +15,9 @@ import (
 // CreateWorkspace 			godoc
 //
 //	@Tags			workspace
-//	@Summary		Create a workspace
-//	@Description	Create a workspace
-//	@Param			workspace	body	CreateWorkspaceDTO	true	"Create workspace"
+//	@Summary		Bir çalışma alanı oluştur
+//	@Description	Bir çalışma alanı oluştur
+//	@Param			workspace	body	CreateWorkspaceDTO	true	"Çalışma alanı oluştur"
 //	@Produce		json
 //	@Success		200	{object}	Workspace
 //	@Router			/workspace [post]
@@ -27,7 +27,7 @@ func CreateWorkspace(ctx *gin.Context) {
 	var createWorkspaceReq dto.CreateWorkspaceDTO
 	err := ctx.BindJSON(&createWorkspaceReq)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %w", err))
 		return
 	}
 
@@ -35,7 +35,7 @@ func CreateWorkspace(ctx *gin.Context) {
 
 	w, err := server.WorkspaceService.CreateWorkspace(ctx.Request.Context(), createWorkspaceReq)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to create workspace: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("çalışma alanı oluşturulamadı: %w", err))
 		return
 	}
 

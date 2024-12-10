@@ -18,10 +18,10 @@ import (
 // GetGitContext 			godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Get Git context
-//	@Description	Get Git context
+//	@Summary		Git bağlamını al
+//	@Description	Git bağlamını al
 //	@Produce		json
-//	@Param			repository	body		GetRepositoryContext	true	"Get repository context"
+//	@Param			repository	body		GetRepositoryContext	true	"Depo bağlamını al"
 //	@Success		200			{object}	GitRepository
 //	@Router			/gitprovider/context [post]
 //
@@ -29,7 +29,7 @@ import (
 func GetGitContext(ctx *gin.Context) {
 	var repositoryContext gitprovider.GetRepositoryContext
 	if err := ctx.ShouldBindJSON(&repositoryContext); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to bind json: %s", err.Error()))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("JSON bağlama hatası: %s", err.Error()))
 		return
 	}
 
@@ -61,10 +61,10 @@ func GetGitContext(ctx *gin.Context) {
 // GetUrlFromRepository 			godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Get URL from Git repository
-//	@Description	Get URL from Git repository
+//	@Summary		Git deposundan URL al
+//	@Description	Git deposundan URL al
 //	@Produce		json
-//	@Param			repository	body		GitRepository	true	"Git repository"
+//	@Param			repository	body		GitRepository	true	"Git deposu"
 //	@Success		200			{object}	RepositoryUrl
 //	@Router			/gitprovider/context/url [post]
 //
@@ -72,7 +72,7 @@ func GetGitContext(ctx *gin.Context) {
 func GetUrlFromRepository(ctx *gin.Context) {
 	var repoContext gitprovider.GetRepositoryContext
 	if err := ctx.ShouldBindJSON(&repoContext); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to bind json: %s", err.Error()))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("JSON bağlama hatası: %s", err.Error()))
 		return
 	}
 

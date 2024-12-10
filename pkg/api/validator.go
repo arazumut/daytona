@@ -13,15 +13,19 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// defaultValidator yapısı, tek seferlik başlatma ve doğrulama nesnesini içerir.
 type defaultValidator struct {
 	once     sync.Once
 	validate *validator.Validate
 }
 
+// defaultValidator'ın binding.StructValidator arayüzünü uyguladığını belirtir.
 var _ binding.StructValidator = &defaultValidator{}
 
+// SliceValidationError, birden fazla hatayı içeren özel bir hata türüdür.
 type SliceValidationError []error
 
+// Error metodu, SliceValidationError içindeki hataları birleştirir ve döner.
 func (err SliceValidationError) Error() string {
 	if len(err) == 0 {
 		return ""
@@ -39,6 +43,7 @@ func (err SliceValidationError) Error() string {
 	return b.String()
 }
 
+// ValidateStruct metodu, verilen nesneyi doğrular.
 func (v *defaultValidator) ValidateStruct(obj any) error {
 	if obj == nil {
 		return nil
@@ -70,16 +75,19 @@ func (v *defaultValidator) ValidateStruct(obj any) error {
 	}
 }
 
+// Engine metodu, doğrulama motorunu döner.
 func (v *defaultValidator) Engine() interface{} {
 	v.lazyinit()
 	return v.validate
 }
 
+// validateStruct metodu, verilen nesneyi doğrular.
 func (v *defaultValidator) validateStruct(obj any) error {
 	v.lazyinit()
 	return v.validate.Struct(obj)
 }
 
+// lazyinit metodu, doğrulama nesnesini tek seferlik başlatır.
 func (v *defaultValidator) lazyinit() {
 	v.once.Do(func() {
 		v.validate = validator.New(validator.WithRequiredStructEnabled())

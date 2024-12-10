@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Tüm Hakları Saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package gitprovider
@@ -17,13 +17,13 @@ import (
 // GetRepoBranches 			godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Get Git repository branches
-//	@Description	Get Git repository branches
-//	@Param			gitProviderId	path	string	true	"Git provider"
+//	@Summary		Git deposu dallarını getir
+//	@Description	Git deposu dallarını getir
+//	@Param			gitProviderId	path	string	true	"Git sağlayıcı"
 //	@Param			namespaceId		path	string	true	"Namespace"
 //	@Param			repositoryId	path	string	true	"Repository"
-//	@Param			page			query	int		false	"Page number"
-//	@Param			per_page		query	int		false	"Number of items per page"
+//	@Param			page			query	int		false	"Sayfa numarası"
+//	@Param			per_page		query	int		false	"Sayfa başına öğe sayısı"
 //	@Produce		json
 //	@Success		200	{array}	GitBranch
 //	@Router			/gitprovider/{gitProviderId}/{namespaceId}/{repositoryId}/branches [get]
@@ -41,13 +41,13 @@ func GetRepoBranches(ctx *gin.Context) {
 
 	namespaceId, err := url.QueryUnescape(namespaceArg)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to parse namespace: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("namespace çözümlenemedi: %w", err))
 		return
 	}
 
 	repositoryId, err := url.QueryUnescape(repositoryArg)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to parse repository: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("repository çözümlenemedi: %w", err))
 		return
 	}
 

@@ -12,38 +12,38 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ProcessGitEvent 			godoc
+// Git Olayını İşle 			godoc
 //
 //	@Tags			prebuild
-//	@Summary		ProcessGitEvent
-//	@Description	ProcessGitEvent
-//	@Param			workspace	body	interface{}	true	"Webhook event"
+//	@Summary		Git Olayını İşle
+//	@Description	Git Olayını İşle
+//	@Param			workspace	body	interface{}	true	"Webhook olayı"
 //	@Success		200
 //	@Router			/project-config/prebuild/process-git-event [post]
 //
 //	@id				ProcessGitEvent
-func ProcessGitEvent(ctx *gin.Context) {
+func GitOlayiniIsle(ctx *gin.Context) {
 	server := server.GetInstance(nil)
 
-	gitProvider, err := server.GitProviderService.GetGitProviderForHttpRequest(ctx.Request)
+	gitSaglayici, err := server.GitProviderService.GetGitProviderForHttpRequest(ctx.Request)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get git provider for request: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("istek için git sağlayıcı alınamadı: %s", err.Error()))
 		return
 	}
 
-	gitEventData, err := gitProvider.ParseEventData(ctx.Request)
+	gitOlayVerisi, err := gitSaglayici.ParseEventData(ctx.Request)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to parse event data: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("olay verisi parse edilemedi: %s", err.Error()))
 		return
 	}
 
-	if gitEventData == nil {
+	if gitOlayVerisi == nil {
 		return
 	}
 
-	err = server.ProjectConfigService.ProcessGitEvent(*gitEventData)
+	err = server.ProjectConfigService.ProcessGitEvent(*gitOlayVerisi)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to process git event: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("git olayı işlenemedi: %s", err.Error()))
 		return
 	}
 

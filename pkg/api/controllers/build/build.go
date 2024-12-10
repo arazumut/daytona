@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024
 // SPDX-License-Identifier: Apache-2.0
 
 package build
@@ -21,8 +21,8 @@ import (
 // CreateBuild godoc
 //
 //	@Tags			build
-//	@Summary		Create a build
-//	@Description	Create a build
+//	@Summary		Build oluştur
+//	@Description	Build oluştur
 //	@Accept			json
 //	@Param			createBuildDto	body		CreateBuildDTO	true	"Create Build DTO"
 //	@Success		201				{string}	buildId
@@ -33,7 +33,7 @@ func CreateBuild(ctx *gin.Context) {
 	var createBuildDto dto.CreateBuildDTO
 	err := ctx.BindJSON(&createBuildDto)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %s", err.Error()))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %s", err.Error()))
 		return
 	}
 
@@ -43,13 +43,13 @@ func CreateBuild(ctx *gin.Context) {
 		Name: &createBuildDto.ProjectConfigName,
 	})
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get project config: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("proje yapılandırması alınamadı: %s", err.Error()))
 		return
 	}
 
 	gitProvider, _, err := s.GitProviderService.GetGitProviderForUrl(projectConfig.RepositoryUrl)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get git provider for url: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("url için git sağlayıcısı alınamadı: %s", err.Error()))
 		return
 	}
 
@@ -58,7 +58,7 @@ func CreateBuild(ctx *gin.Context) {
 		Branch: &createBuildDto.Branch,
 	})
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get repository: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("depo alınamadı: %s", err.Error()))
 		return
 	}
 
@@ -76,7 +76,7 @@ func CreateBuild(ctx *gin.Context) {
 
 	buildId, err := s.BuildService.Create(newBuildDto)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to create build: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("build oluşturulamadı: %s", err.Error()))
 		return
 	}
 
@@ -86,8 +86,8 @@ func CreateBuild(ctx *gin.Context) {
 // GetBuild godoc
 //
 //	@Tags			build
-//	@Summary		Get build data
-//	@Description	Get build data
+//	@Summary		Build verilerini al
+//	@Description	Build verilerini al
 //	@Accept			json
 //	@Param			buildId	path		string	true	"Build ID"
 //	@Success		200		{object}	Build
@@ -107,7 +107,7 @@ func GetBuild(ctx *gin.Context) {
 		if build.IsBuildNotFound(err) {
 			statusCode = http.StatusNotFound
 		}
-		ctx.AbortWithError(statusCode, fmt.Errorf("failed to find build: %w", err))
+		ctx.AbortWithError(statusCode, fmt.Errorf("build bulunamadı: %w", err))
 		return
 	}
 
@@ -117,8 +117,8 @@ func GetBuild(ctx *gin.Context) {
 // ListBuilds godoc
 //
 //	@Tags			build
-//	@Summary		List builds
-//	@Description	List builds
+//	@Summary		Buildleri listele
+//	@Description	Buildleri listele
 //	@Produce		json
 //	@Success		200	{array}	Build
 //	@Router			/build [get]
@@ -129,7 +129,7 @@ func ListBuilds(ctx *gin.Context) {
 
 	builds, err := server.BuildService.List(nil)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to list builds: %s", err.Error()))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("buildler listelenemedi: %s", err.Error()))
 		return
 	}
 
@@ -139,9 +139,9 @@ func ListBuilds(ctx *gin.Context) {
 // DeleteAllBuilds godoc
 //
 //	@Tags			build
-//	@Summary		Delete ALL builds
-//	@Description	Delete ALL builds
-//	@Param			force	query	bool	false	"Force"
+//	@Summary		TÜM buildleri sil
+//	@Description	TÜM buildleri sil
+//	@Param			force	query	bool	false	"Zorla"
 //	@Success		204
 //	@Router			/build [delete]
 //
@@ -154,7 +154,7 @@ func DeleteAllBuilds(ctx *gin.Context) {
 	if forceQuery != "" {
 		force, err = strconv.ParseBool(forceQuery)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid value for force flag"))
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("force bayrağı için geçersiz değer"))
 			return
 		}
 	}
@@ -176,10 +176,10 @@ func DeleteAllBuilds(ctx *gin.Context) {
 // DeleteBuild godoc
 //
 //	@Tags			build
-//	@Summary		Delete build
-//	@Description	Delete build
+//	@Summary		Build sil
+//	@Description	Build sil
 //	@Param			buildId	path	string	true	"Build ID"
-//	@Param			force	query	bool	false	"Force"
+//	@Param			force	query	bool	false	"Zorla"
 //	@Success		204
 //	@Router			/build/{buildId} [delete]
 //
@@ -193,7 +193,7 @@ func DeleteBuild(ctx *gin.Context) {
 	if forceQuery != "" {
 		force, err = strconv.ParseBool(forceQuery)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid value for force flag"))
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("force bayrağı için geçersiz değer"))
 			return
 		}
 	}
@@ -217,10 +217,10 @@ func DeleteBuild(ctx *gin.Context) {
 // DeleteBuildsFromPrebuild godoc
 //
 //	@Tags			build
-//	@Summary		Delete builds
-//	@Description	Delete builds
+//	@Summary		Buildleri sil
+//	@Description	Buildleri sil
 //	@Param			prebuildId	path	string	true	"Prebuild ID"
-//	@Param			force		query	bool	false	"Force"
+//	@Param			force		query	bool	false	"Zorla"
 //	@Success		204
 //	@Router			/build/prebuild/{prebuildId} [delete]
 //
@@ -234,19 +234,19 @@ func DeleteBuildsFromPrebuild(ctx *gin.Context) {
 	if forceQuery != "" {
 		force, err = strconv.ParseBool(forceQuery)
 		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid value for force flag"))
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("force bayrağı için geçersiz değer"))
 			return
 		}
 	}
 
 	server := server.GetInstance(nil)
 
-	// Fail if prebuild does not exist
+	// Prebuild mevcut değilse başarısız ol
 	_, err = server.ProjectConfigService.FindPrebuild(nil, &config.PrebuildFilter{
 		Id: &prebuildId,
 	})
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to find prebuild: %s", err.Error()))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("prebuild bulunamadı: %s", err.Error()))
 		return
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Tüm Hakları Saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package provider
@@ -14,9 +14,9 @@ import (
 // GetTargetManifest godoc
 //
 //	@Tags			provider
-//	@Summary		Get provider target manifest
-//	@Description	Get provider target manifest
-//	@Param			provider	path	string	true	"Provider name"
+//	@Summary		Provider hedef manifestosunu al
+//	@Description	Provider hedef manifestosunu al
+//	@Param			provider	path	string	true	"Provider adı"
 //	@Success		200
 //	@Success		200	{object}	ProviderTargetManifest
 //	@Router			/provider/{provider}/target-manifest [get]
@@ -29,13 +29,13 @@ func GetTargetManifest(ctx *gin.Context) {
 
 	p, err := server.ProviderManager.GetProvider(providerName)
 	if err != nil {
-		ctx.AbortWithError(http.StatusNotFound, fmt.Errorf("provider not found: %w", err))
+		ctx.AbortWithError(http.StatusNotFound, fmt.Errorf("provider bulunamadı: %w", err))
 		return
 	}
 
 	manifest, err := (*p).GetTargetManifest()
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get provider manifest: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("provider manifestosu alınamadı: %w", err))
 		return
 	}
 

@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Telif Hakkı
 // SPDX-License-Identifier: Apache-2.0
 
 package controllers
@@ -9,15 +9,16 @@ import (
 	"strconv"
 )
 
-func GetHTTPStatusCodeAndMessageFromError(err error) (int, string, error) {
-	re := regexp.MustCompile(`status code: (\d{3}) err: (.+)`)
-	match := re.FindStringSubmatch(err.Error())
-	if len(match) > 2 {
-		// matched string to an integer (status code)
-		statusCode, convErr := strconv.Atoi(match[1])
-		if convErr == nil {
-			errorMessage := match[2]
-			return statusCode, errorMessage, nil
+// Hata mesajından HTTP durum kodu ve mesajını alır
+func HataMesajindanHTTPDurumKoduVeMesajiAl(err error) (int, string, error) {
+	re := regexp.MustCompile(`durum kodu: (\d{3}) hata: (.+)`)
+	eslesme := re.FindStringSubmatch(err.Error())
+	if len(eslesme) > 2 {
+		// eşleşen stringi bir tamsayıya (durum kodu) dönüştür
+		durumKodu, cevirimHatasi := strconv.Atoi(eslesme[1])
+		if cevirimHatasi == nil {
+			hataMesaji := eslesme[2]
+			return durumKodu, hataMesaji, nil
 		}
 	}
 

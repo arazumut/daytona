@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Telif Hakkı
 // SPDX-License-Identifier: Apache-2.0
 
 package target
@@ -15,7 +15,7 @@ import (
 // ListTargets godoc
 //
 //	@Tags			target
-//	@Summary		List targets
+//	@Summary		Hedefleri
 //	@Description	List targets
 //	@Produce		json
 //	@Success		200	{array}	ProviderTarget

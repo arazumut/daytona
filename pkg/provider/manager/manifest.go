@@ -36,6 +36,7 @@ func (p *ProviderManifest) FindLatestVersion() (string, *Version) {
 	version, ok := p.Versions[latestVersion]
 	if !ok {
 		return latestVersion, nil
+
 	}
 
 	return latestVersion, &version

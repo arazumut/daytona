@@ -16,12 +16,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// İzlenmeyecek yolların listesi
 var ignorePaths = map[string]bool{
 	"/health": true,
 	"/workspace/:workspaceId/:projectId/state": true,
 	"/server/network-key":                      true,
 }
 
+// Telemetri Middleware fonksiyonu
 func TelemetryMiddleware(telemetryService telemetry.TelemetryService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if telemetryService == nil {

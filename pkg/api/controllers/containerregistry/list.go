@@ -22,7 +22,7 @@ import (
 //	@Success		200		{object}	ContainerRegistry
 //	@Router			/container-registry/{server} [get]
 //
-//	@id				GetContainerRegistry
+//	@id				GetContainerRegistry:.
 func GetContainerRegistry(ctx *gin.Context) {
 	crServer := ctx.Param("server")
 

@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// 2024 Daytona Platforms Inc. Tüm Hakları Saklıdır.
 // SPDX-License-Identifier: Apache-2.0
 
 package binary
@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Used in projects to download the Daytona binary
+// Daytona binary dosyasını indirmek için projelerde kullanılır
 func GetDaytonaScript(ctx *gin.Context) {
 	scheme := "http"
 	if ctx.Request.TLS != nil || ctx.GetHeader("X-Forwarded-Proto") == "https" {

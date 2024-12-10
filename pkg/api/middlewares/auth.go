@@ -12,24 +12,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AuthMiddleware, gelen isteklerin yetkilendirilmesini sağlar.
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		bearerToken := ctx.GetHeader("Authorization")
 		if bearerToken == "" {
-			ctx.AbortWithError(401, errors.New("unauthorized"))
+			ctx.AbortWithError(401, errors.New("yetkisiz"))
 			return
 		}
 
 		token := ExtractToken(bearerToken)
 		if token == "" {
-			ctx.AbortWithError(401, errors.New("unauthorized"))
+			ctx.AbortWithError(401, errors.New("yetkisiz"))
 			return
 		}
 
 		server := server.GetInstance(nil)
 
 		if !server.ApiKeyService.IsValidApiKey(token) {
-			ctx.AbortWithError(401, errors.New("unauthorized"))
+			ctx.AbortWithError(401, errors.New("yetkisiz"))
 			return
 		}
 
@@ -46,6 +47,7 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
+// ExtractToken, Bearer token'ını Authorization başlığından çıkarır.
 func ExtractToken(bearerToken string) string {
 	if !strings.HasPrefix(bearerToken, "Bearer ") {
 		return ""

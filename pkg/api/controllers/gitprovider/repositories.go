@@ -1,4 +1,4 @@
-// Copyright 2024 Daytona Platforms Inc.
+// Daytona Platforms Inc. 2024 Telif Hakkı
 // SPDX-License-Identifier: Apache-2.0
 
 package gitprovider
@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/daytonaio/daytona/pkg/api/controllers"
-
 	"github.com/daytonaio/daytona/pkg/server"
 	"github.com/gin-gonic/gin"
 )
@@ -16,12 +15,12 @@ import (
 // GetRepositories 			godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Get Git repositories
-//	@Description	Get Git repositories
-//	@Param			gitProviderId	path	string	true	"Git provider"
+//	@Summary		Git depolarını getir
+//	@Description	Git depolarını getir
+//	@Param			gitProviderId	path	string	true	"Git sağlayıcı"
 //	@Param			namespaceId		path	string	true	"Namespace"
-//	@Param			page			query	int		false	"Page number"
-//	@Param			per_page		query	int		false	"Number of items per page"
+//	@Param			page			query	int		false	"Sayfa numarası"
+//	@Param			per_page		query	int		false	"Sayfa başına öğe sayısı"
 //	@Produce		json
 //	@Success		200	{array}	GitRepository
 //	@Router			/gitprovider/{gitProviderId}/{namespaceId}/repositories [get]
@@ -36,9 +35,9 @@ func GetRepositories(ctx *gin.Context) {
 		return
 	}
 
-	server := server.GetInstance(nil)
+	serverInstance := server.GetInstance(nil)
 
-	response, err := server.GitProviderService.GetRepositories(gitProviderId, namespaceId, options)
+	response, err := serverInstance.GitProviderService.GetRepositories(gitProviderId, namespaceId, options)
 	if err != nil {
 		statusCode, message, codeErr := controllers.GetHTTPStatusCodeAndMessageFromError(err)
 		if codeErr != nil {
@@ -48,5 +47,5 @@ func GetRepositories(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, response)
+	ctx.JSON(http.StatusOK, response)
 }

@@ -63,7 +63,7 @@ func (s *Server) Start() error {
 				reconnect()
 				continue
 			}
-
+			for 
 			status, err := localClient.Status(context.Background())
 			if err != nil {
 				log.Errorf("Failed to get local client status: %v, %v", err, common.ErrConnection)
@@ -77,6 +77,9 @@ func (s *Server) Start() error {
 			} else {
 				log.Tracef("Connected to server. Status: %v", status)
 			}
+
+			
+
 		}
 	}(tsnetServer)
 

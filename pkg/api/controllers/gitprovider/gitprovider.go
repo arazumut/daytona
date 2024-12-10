@@ -7,9 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
-
 	"net/url"
+	"strconv"
 
 	"github.com/daytonaio/daytona/pkg/api/controllers"
 	"github.com/daytonaio/daytona/pkg/api/controllers/gitprovider/dto"
@@ -19,11 +18,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ListGitProviders 			godoc
+// ListGitProviders godoc
 //
 //	@Tags			gitProvider
-//	@Summary		List Git providers
-//	@Description	List Git providers
+//	@Summary		Git sağlayıcılarını listele
+//	@Description	Git sağlayıcılarını listele
 //	@Produce		json
 //	@Success		200	{array}	gitprovider.GitProviderConfig
 //	@Router			/gitprovider [get]
@@ -36,7 +35,7 @@ func ListGitProviders(ctx *gin.Context) {
 
 	response, err := server.GitProviderService.ListConfigs()
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to list git providers: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("git sağlayıcılarını listeleme başarısız: %w", err))
 		return
 	}
 
@@ -48,11 +47,11 @@ func ListGitProviders(ctx *gin.Context) {
 	ctx.JSON(200, response)
 }
 
-// ListGitProvidersForUrl 			godoc
+// ListGitProvidersForUrl godoc
 //
 //	@Tags			gitProvider
-//	@Summary		List Git providers for url
-//	@Description	List Git providers for url
+//	@Summary		URL için Git sağlayıcılarını listele
+//	@Description	URL için Git sağlayıcılarını listele
 //	@Produce		json
 //	@Param			url	path	string	true	"Url"
 //	@Success		200	{array}	gitprovider.GitProviderConfig
@@ -64,7 +63,7 @@ func ListGitProvidersForUrl(ctx *gin.Context) {
 
 	decodedUrl, err := url.QueryUnescape(urlParam)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to decode query param: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("sorgu parametresi çözümlenemedi: %w", err))
 		return
 	}
 
@@ -72,7 +71,7 @@ func ListGitProvidersForUrl(ctx *gin.Context) {
 
 	gitProviders, err := server.GitProviderService.ListConfigsForUrl(decodedUrl)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to get git provider for url: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("URL için git sağlayıcısı alınamadı: %w", err))
 		return
 	}
 
@@ -86,11 +85,11 @@ func ListGitProvidersForUrl(ctx *gin.Context) {
 	ctx.JSON(200, gitProviders)
 }
 
-// GetGitProvider 			godoc
+// GetGitProvider godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Get Git provider
-//	@Description	Get Git provider
+//	@Summary		Git sağlayıcısını al
+//	@Description	Git sağlayıcısını al
 //	@Produce		plain
 //	@Param			gitProviderId	path		string	true	"ID"
 //	@Success		200				{object}	gitprovider.GitProviderConfig
@@ -120,11 +119,11 @@ func GetGitProvider(ctx *gin.Context) {
 	ctx.JSON(200, gitProvider)
 }
 
-// GetGitProviderIdForUrl 			godoc
+// GetGitProviderIdForUrl godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Get Git provider ID
-//	@Description	Get Git provider ID
+//	@Summary		URL için Git sağlayıcı ID'sini al
+//	@Description	URL için Git sağlayıcı ID'sini al
 //	@Produce		plain
 //	@Param			url	path		string	true	"Url"
 //	@Success		200	{string}	providerId
@@ -136,7 +135,7 @@ func GetGitProviderIdForUrl(ctx *gin.Context) {
 
 	decodedUrl, err := url.QueryUnescape(urlParam)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to decode query param: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("sorgu parametresi çözümlenemedi: %w", err))
 		return
 	}
 
@@ -155,12 +154,12 @@ func GetGitProviderIdForUrl(ctx *gin.Context) {
 	ctx.String(200, providerId)
 }
 
-// SetGitProvider 			godoc
+// SetGitProvider godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Set Git provider
-//	@Description	Set Git provider
-//	@Param			gitProviderConfig	body	SetGitProviderConfig	true	"Git provider"
+//	@Summary		Git sağlayıcısını ayarla
+//	@Description	Git sağlayıcısını ayarla
+//	@Param			gitProviderConfig	body	SetGitProviderConfig	true	"Git sağlayıcı"
 //	@Produce		json
 //	@Success		200
 //	@Router			/gitprovider [put]
@@ -171,7 +170,7 @@ func SetGitProvider(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&setConfigDto)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %w", err))
 		return
 	}
 
@@ -207,12 +206,12 @@ func SetGitProvider(ctx *gin.Context) {
 	ctx.JSON(200, nil)
 }
 
-// RemoveGitProvider 			godoc
+// RemoveGitProvider godoc
 //
 //	@Tags			gitProvider
-//	@Summary		Remove Git provider
-//	@Description	Remove Git provider
-//	@Param			gitProviderId	path	string	true	"Git provider"
+//	@Summary		Git sağlayıcısını kaldır
+//	@Description	Git sağlayıcısını kaldır
+//	@Param			gitProviderId	path	string	true	"Git sağlayıcı"
 //	@Produce		json
 //	@Success		200
 //	@Router			/gitprovider/{gitProviderId} [delete]
@@ -236,7 +235,7 @@ func RemoveGitProvider(ctx *gin.Context) {
 	ctx.JSON(200, nil)
 }
 
-// extract pagination related query params
+// Sayfalama ile ilgili sorgu parametrelerini çıkar
 func getListOptions(ctx *gin.Context) (gitprovider.ListOptions, error) {
 	pageQuery := ctx.Query("page")
 	perPageQuery := ctx.Query("per_page")
@@ -248,14 +247,14 @@ func getListOptions(ctx *gin.Context) (gitprovider.ListOptions, error) {
 	if pageQuery != "" {
 		page, err = strconv.Atoi(pageQuery)
 		if err != nil {
-			return gitprovider.ListOptions{}, errors.New("invalid value for 'page' query param")
+			return gitprovider.ListOptions{}, errors.New("geçersiz 'page' sorgu parametresi")
 		}
 	}
 
 	if perPageQuery != "" {
 		perPage, err = strconv.Atoi(perPageQuery)
 		if err != nil {
-			return gitprovider.ListOptions{}, errors.New("invalid value for 'per_page' query param")
+			return gitprovider.ListOptions{}, errors.New("geçersiz 'per_page' sorgu parametresi")
 		}
 	}
 

@@ -16,10 +16,10 @@ import (
 // SetContainerRegistry godoc
 //
 //	@Tags			container-registry
-//	@Summary		Set container registry credentials
-//	@Description	Set container registry credentials
-//	@Param			server				path	string				true	"Container Registry server name"
-//	@Param			containerRegistry	body	ContainerRegistry	true	"Container Registry credentials to set"
+//	@Summary		Konteyner kayıt defteri kimlik bilgilerini ayarla
+//	@Description	Konteyner kayıt defteri kimlik bilgilerini ayarla
+//	@Param			server				path	string				true	"Konteyner Kayıt Defteri sunucu adı"
+//	@Param			containerRegistry	body	ContainerRegistry	true	"Konteyner Kayıt Defteri kimlik bilgilerini ayarla"
 //	@Success		201
 //	@Router			/container-registry/{server} [put]
 //
@@ -29,14 +29,14 @@ func SetContainerRegistry(ctx *gin.Context) {
 
 	decodedServerURL, err := url.QueryUnescape(crServer)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to decode server URL: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("sunucu URL'si çözülemedi: %w", err))
 		return
 	}
 
 	var req containerregistry.ContainerRegistry
 	err = ctx.BindJSON(&req)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid request body: %w", err))
+		ctx.AbortWithError(http.StatusBadRequest, fmt.Errorf("geçersiz istek gövdesi: %w", err))
 		return
 	}
 
@@ -46,7 +46,7 @@ func SetContainerRegistry(ctx *gin.Context) {
 	if err == nil {
 		err = server.ContainerRegistryService.Delete(decodedServerURL)
 		if err != nil {
-			ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to remove container registry: %w", err))
+			ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("konteyner kayıt defteri kaldırılamadı: %w", err))
 			return
 		}
 
@@ -59,7 +59,7 @@ func SetContainerRegistry(ctx *gin.Context) {
 
 	err = server.ContainerRegistryService.Save(cr)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("failed to set container registry: %w", err))
+		ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("konteyner kayıt defteri ayarlanamadı: %w", err))
 		return
 	}
 
